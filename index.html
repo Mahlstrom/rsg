@@ -1,47 +1,71 @@
-<style>
-    td {
-        font-size: 2px;
-        width: 8px;
-        height: 8px;
-    }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Squidgame</title>
+    <style>
+        html, body {
+            height: 100%;
+        }
 
-    #board {
-        float: left;
-        margin-right: 30px;
-    }
+        td {
+            font-size: 2px;
+            width: 7px;
+            height: 7px;
+        }
 
-    textarea {
-        height: 100%;
-    }
-</style>
-<script type="application/javascript">
-    function refreshTable() {
-        t = document.getElementById('tboard')
-        t.innerHTML = null
+        #board {
+            float: left;
+            margin-right: 30px;
+        }
 
-        let fixed = document.getElementById('tarea').value.replace(/\s+/g, '');
-        let total = 0;
-        let side = 0;
-        fixed.split("").forEach(element => {
-            total = total + parseInt(element)
-            for (i = 0; i < parseInt(element); i++) {
-                row = document.createElement('tr')
-                fill = document.createElement('td')
-                fill.style.backgroundColor = "green";
-                if (side % 2) {
-                    row.appendChild(fill)
-                    row.appendChild(document.createElement('td'))
-                } else {
-                    row.appendChild(document.createElement('td'))
-                    row.appendChild(fill)
-                }
-                t.appendChild(row)
+        textarea {
+            height: 100%;
+        }
+    </style>
+    <script type="application/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            refreshTable()
+        })
+
+        function refreshTable() {
+            t = document.getElementById('tboard')
+            t.innerHTML = null
+
+            let fixed = document.getElementById('tarea').value.replace(/\s+/g, '');
+            let total = 0;
+            let side = 0;
+            if (document.querySelector('input[name="startside"]:checked').value === 'left') {
+                side = 1;
             }
-            side++;
-        });
-        document.getElementById('proce').innerText = total
-    }
-</script>
+            b_fore = null;
+            fixed.split("").forEach(element => {
+                total = total + parseInt(element)
+                for (i = 0; i < parseInt(element); i++) {
+                    row = document.createElement('tr')
+                    fill = document.createElement('td')
+                    fill.style.backgroundColor = "green";
+                    if (side % 2) {
+                        row.appendChild(fill)
+                        row.appendChild(document.createElement('td'))
+                    } else {
+                        row.appendChild(document.createElement('td'))
+                        row.appendChild(fill)
+                    }
+                    if(b_fore){
+                        t.insertBefore(row,b_fore)
+                    }else{
+                        t.appendChild(row)
+                    }
+                    b_fore = row;
+                }
+                side++;
+            });
+            document.getElementById('proce').innerText = total
+        }
+    </script>
+</head>
+<body>
 <div id="board">
     <table id="tboard" border="0">
     </table>
@@ -49,6 +73,16 @@
 <div><span id="proce">0</span>/96 = 0%</div>
 <div>
     <form>
-        <textarea id="tarea" onkeyup="refreshTable()"></textarea>
+        <fieldset>
+            <legend>Select starting side</legend>
+            <input onchange="refreshTable()" type="radio" id="s_left" name="startside" value="left" checked>
+            <label for="s_left">Left</label>
+            <input onchange="refreshTable()" type="radio" id="s_right" name="startside" value="right">
+            <label for="s_right">Right</label>
+        </fieldset>
+        <textarea style="height: 400px" id="tarea" onkeyup="refreshTable()" autofocus></textarea>
     </form>
 </div>
+
+</body>
+</html>
